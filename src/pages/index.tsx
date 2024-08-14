@@ -1,9 +1,48 @@
+"use client"
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import { useEffect, useRef } from 'react';
 
 const Home: NextPage = () => {
+  const largeCanvasRef = useRef<HTMLCanvasElement>(null);
+  const smallCanvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const loadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous'; // Handle cross-origin issues
+      img.onload = () => resolve(img);
+      img.onerror = (err) => reject(err);
+      img.src = src;
+    });
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+
+    if (ctx) {
+        // Tạo hai đối tượng Image
+        const img1 = new Image();
+        const img2 = new Image();
+
+        img1.src = './wallpaper-1.png';
+        img2.src = 'https://euc.li/imduchuyyy.eth';
+
+        img1.onload = () => {
+            ctx.drawImage(img1, 0, 0, img1.width, img1.height);
+
+            img2.onload = () => {
+                ctx.drawImage(img2, img1.width, 0, img2.width, img2.height);
+            };
+        };
+    }
+}, []);
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -26,6 +65,15 @@ const Home: NextPage = () => {
         <p className={styles.description}>
           Get started by editing{' '}
           <code className={styles.code}>pages/index.tsx</code>
+        </p>
+
+        <img src='./wallpaper-1.png' width={300}/>
+        <img src='https://euc.li/imduchuyyy.eth' width={300}/>
+
+        <canvas ref={canvasRef} />
+
+        <p className={styles.description}>
+          <input className={styles.input} placeholder="Token ID..." type='number'/>
         </p>
 
         <div className={styles.grid}>
